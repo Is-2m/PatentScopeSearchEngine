@@ -1,4 +1,3 @@
-// resultsView.js
 function updateStats(totalCount) {
   document.getElementById("stats").innerHTML =
     totalCount !== undefined
@@ -23,156 +22,146 @@ function displayResults(data) {
 
 function createPatentHTML(patent) {
   return `
-            <div class="patent-item">
-                <div class="patent-title">${
-                  patent.patent_title || "Untitled"
-                }</div>
-                <div class="patent-details">
-                    <div class="main-details">
-                        <p><strong>Patent Number:</strong> ${
-                          patent.patent_number
-                        }</p>
-                        <p><strong>Date:</strong> ${formatDate(
-                          patent.patent_date
-                        )}</p>
-                        <p><strong>Type:</strong> ${patent.patent_type} (${
+    <div class="patent-item">
+        <div class="patent-title">${patent.patent_title || "Untitled"}</div>
+        <div class="patent-details">
+            <div class="main-details">
+                <p><strong>Patent Number:</strong> ${patent.patent_number}</p>
+                <p><strong>Date:</strong> ${formatDate(patent.patent_date)}</p>
+                <p><strong>Type:</strong> ${patent.patent_type} (${
     patent.patent_kind
   })</p>
-                    </div>
-                    
-                    <div class="expandable-section">
-                        <div class="expandable-header" onclick="ResultsView.toggleSection(this)">
-                            <span class="expand-icon">▼</span> Inventors
-                        </div>
-                        <div class="expandable-content">
-                            ${this.getInventorsTable(patent.inventors)}
-                        </div>
-                    </div>
-
-                    <div class="expandable-section">
-                        <div class="expandable-header" onclick="ResultsView.toggleSection(this)">
-                            <span class="expand-icon">▼</span> Assignees
-                        </div>
-                        <div class="expandable-content">
-                            ${this.getAssigneesTable(patent.assignees)}
-                        </div>
-                    </div>
-
-                    <div class="expandable-section">
-                        <div class="expandable-header" onclick="ResultsView.toggleSection(this)">
-                            <span class="expand-icon">▼</span> CPC Classifications
-                        </div>
-                        <div class="expandable-content">
-                            ${this.getCPCTable(patent.cpcs)}
-                        </div>
-                    </div>
-
-                    ${
-                      patent.patent_abstract
-                        ? `<div class="expandable-section">
-                            <div class="expandable-header" onclick="ResultsView.toggleSection(this)">
-                                <span class="expand-icon">▼</span> Abstract
-                            </div>
-                            <div class="expandable-content">
-                                <p>${patent.patent_abstract}</p>
-                            </div>
-                           </div>`
-                        : ""
-                    }
+            </div>
+            
+            <div class="expandable-section">
+                <div class="expandable-header" onclick="toggleSelection(this)">
+                    <span class="expand-icon">▼</span> Inventors
+                </div>
+                <div class="expandable-content">
+                    ${getInventorsTable(patent.inventors)}
                 </div>
             </div>
-        `;
+
+            <div class="expandable-section">
+                <div class="expandable-header" onclick="toggleSelection(this)">
+                    <span class="expand-icon">▼</span> Assignees
+                </div>
+                <div class="expandable-content">
+                    ${getAssigneesTable(patent.assignees)}
+                </div>
+            </div>
+
+            <div class="expandable-section">
+                <div class="expandable-header" onclick="toggleSelection(this)">
+                    <span class="expand-icon">▼</span> CPC Classifications
+                </div>
+                <div class="expandable-content">
+                    ${getCPCTable(patent.cpcs)}
+                </div>
+            </div>
+
+            ${
+              patent.patent_abstract
+                ? `<div class="expandable-section">
+                    <div class="expandable-header" onclick="toggleSelection(this)">
+                        <span class="expand-icon">▼</span> Abstract
+                    </div>
+                    <div class="expandable-content">
+                        <p>${patent.patent_abstract}</p>
+                    </div>
+                  </div>`
+                : ""
+            }
+        </div>
+    </div>
+  `;
 }
 
 function getInventorsTable(inventors) {
   if (!inventors || inventors.length === 0) return "<p>No inventors listed</p>";
 
   return `
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${inventors
-                      .map(
-                        (inv) => `
-                        <tr>
-                            <td>${inv.inventor_first_name}</td>
-                            <td>${inv.inventor_last_name}</td>
-                            <td>${inv.inventor_key_id}</td>
-                        </tr>
-                    `
-                      )
-                      .join("")}
-                </tbody>
-            </table>
-        `;
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${inventors
+              .map(
+                (inv) => `
+                <tr>
+                    <td>${inv.inventor_first_name}</td>
+                    <td>${inv.inventor_last_name}</td>
+                    <td>${inv.inventor_key_id}</td>
+                </tr>
+            `
+              )
+              .join("")}
+        </tbody>
+    </table>
+  `;
 }
 
 function getAssigneesTable(assignees) {
   if (!assignees || assignees.length === 0) return "<p>No assignees listed</p>";
 
   return `
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Organization</th>
-                        <th>Type</th>
-                        <th>ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${assignees
-                      .map(
-                        (ass) => `
-                        <tr>
-                            <td>${ass.assignee_organization}</td>
-                            <td>${this.getAssigneeTypeText(
-                              ass.assignee_type
-                            )}</td>
-                            <td>${ass.assignee_key_id}</td>
-                        </tr>
-                    `
-                      )
-                      .join("")}
-                </tbody>
-            </table>
-        `;
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Organization</th>
+                <th>Type</th>
+                <th>ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${assignees
+              .map(
+                (ass) => `
+                <tr>
+                    <td>${ass.assignee_organization}</td>
+                    <td>${getAssigneeTypeText(ass.assignee_type)}</td>
+                    <td>${ass.assignee_key_id}</td>
+                </tr>
+            `
+              )
+              .join("")}
+        </tbody>
+    </table>
+  `;
 }
 
 function getCPCTable(cpcs) {
   if (!cpcs || cpcs.length === 0) return "<p>No CPC classifications listed</p>";
 
   return `
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Section</th>
-                        <th>Group</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${cpcs
-                      .map(
-                        (cpc) => `
-                        <tr>
-                            <td>${cpc.cpc_section_id}</td>
-                            <td>${cpc.cpc_group_id}</td>
-                            <td>${this.getCPCDescription(
-                              cpc.cpc_section_id
-                            )}</td>
-                        </tr>
-                    `
-                      )
-                      .join("")}
-                </tbody>
-            </table>
-        `;
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Section</th>
+                <th>Group</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${cpcs
+              .map(
+                (cpc) => `
+                <tr>
+                    <td>${cpc.cpc_section_id}</td>
+                    <td>${cpc.cpc_group_id}</td>
+                    <td>${getCPCDescription(cpc.cpc_section_id)}</td>
+                </tr>
+            `
+              )
+              .join("")}
+        </tbody>
+    </table>
+  `;
 }
 
 function getCPCDescription(section) {
@@ -190,14 +179,18 @@ function getCPCDescription(section) {
   return descriptions[section] || "Unknown Section";
 }
 
-function toggleSection(header) {
+function toggleSelection(header) {
   const content = header.nextElementSibling;
   const icon = header.querySelector(".expand-icon");
 
-  content.style.maxHeight = content.style.maxHeight
-    ? null
-    : content.scrollHeight + "px";
-  icon.textContent = content.style.maxHeight ? "▼" : "▲";
+  // Collapse the section by default
+  if (!content.style.maxHeight) {
+    content.style.maxHeight = content.scrollHeight + "px";
+    icon.textContent = "▼"; // Show the expanded icon
+  } else {
+    content.style.maxHeight = null;
+    icon.textContent = "▲"; // Show the collapsed icon
+  }
 }
 
 function getAssigneeTypeText(type) {

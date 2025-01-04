@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Advanced Patent Search</title>
+    <link rel="stylesheet" href="../assets/styles/main.css" />
+    <link rel="stylesheet" href="../assets/styles/search.css" />
+    <link rel="stylesheet" href="../assets/styles/results.css" />
+    <link rel="stylesheet" href="../assets/styles/utils.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>Advanced Patent Search</h1>
+        <div class="search-form">
+          <div class="main-search">
+            <input
+              type="text"
+              placeholder="Search in title, abstract, or claims..."
+              id="keywordSearch"
+            />
+          </div>
+
+          <div class="search-section">
+            <div class="search-row">
+              <div class="form-group">
+                <label>Date Range</label>
+                <input type="date" id="dateFrom" placeholder="From" />
+              </div>
+              <div class="form-group">
+                <label>&nbsp;</label>
+                <input type="date" id="dateTo" placeholder="To" />
+              </div>
+            </div>
+
+            <div class="search-row">
+              <div class="form-group">
+                <label>Inventor Name</label>
+                <input
+                  type="text"
+                  id="inventorFirstName"
+                  placeholder="First name"
+                />
+              </div>
+              <div class="form-group">
+                <label>&nbsp;</label>
+                <input
+                  type="text"
+                  id="inventorLastName"
+                  placeholder="Last name"
+                />
+              </div>
+            </div>
+
+            <div class="search-row">
+              <div class="form-group">
+                <label>Assignee Type</label>
+                <select id="assigneeType">
+                  <option value="">All Types</option>
+                  <option value="2">US Company</option>
+                  <option value="3">Foreign Company</option>
+                  <option value="4,5">Individual</option>
+                  <option value="6,7">Government</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Organization Name</label>
+                <input
+                  type="text"
+                  id="assigneeName"
+                  placeholder="Organization name"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="toggle-filters" onclick="toggleAdvancedFilters()">
+            Show Advanced Filters ▼
+          </div>
+
+          <div class="advanced-filters" id="advancedFilters">
+            <div class="search-row">
+              <div class="form-group">
+                <label>Patent Type</label>
+                <select id="patentType">
+                  <option value="">All Types</option>
+                  <option value="utility">Utility</option>
+                  <option value="design">Design</option>
+                  <option value="plant">Plant</option>
+                  <option value="reissue">Reissue</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>CPC Classification</label>
+                <div style="display: flex; gap: 0.5rem">
+                  <input
+                    type="text"
+                    id="cpcSection"
+                    placeholder="Section"
+                    maxlength="1"
+                    style="width: 80px"
+                  />
+                  <input type="text" id="cpcClass" placeholder="Class" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Location</label>
+                <select id="countryCode">
+                  <option value="">All Countries</option>
+                  <option value="US">United States</option>
+                  <option value="EP">European Union</option>
+                  <option value="JP">Japan</option>
+                  <option value="CN">China</option>
+                  <option value="KR">South Korea</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-primary" onclick="searchPatents(1)">
+            Search Patents
+          </button>
+        </div>
+      </div>
+
+      <div class="error" id="error"></div>
+      <div class="loading" id="loading">Searching patents...</div>
+
+      <div class="card">
+        <div class="results-header">
+          <div class="sort-group">
+            <select id="sortField">
+              <option value="patent_date">Sort by Date</option>
+              <option value="patent_number">Sort by Patent Number</option>
+              <option value="patent_title">Sort by Title</option>
+            </select>
+            <select id="sortOrder">
+              <option value="desc">Descending</option>
+              <option value="asc">Ascending</option>
+            </select>
+          </div>
+          <button class="btn-secondary" onclick="exportResults()">
+            Export Results
+          </button>
+        </div>
+
+        <div class="stats" id="stats"></div>
+        <div class="results" id="results"></div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/utils/dateFormatter.js"></script>
+    <script src="../js/utils/queryBuilder.js"></script>
+    <script src="../js/utils/domUtils.js"></script>
+    <script src="../js/services/patentAPI.js"></script>
+    <script src="../js/services/exportService.js"></script>
+    <script src="../js/views/searchView.js"></script>
+    <script src="../js/views/resultsView.js"></script>
+    <script src="../js/views/paginationView.js"></script>
+    <script src="../js/app.js"></script>
+  </body>
+</html>

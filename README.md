@@ -6,7 +6,7 @@ The project is a A vanilla JavaScript application for searching and exploring pa
 
 ## Project Structure
 ```
-/patent-search
+./
   /src
     /assets
       /styles
@@ -27,8 +27,7 @@ The project is a A vanilla JavaScript application for searching and exploring pa
         resultsView.js
         paginationView.js
       app.js
-    /templates
-      index.html
+  index.html
   README.md
 ```
 ## Setup

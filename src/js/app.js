@@ -1,46 +1,47 @@
-class App {
-    static currentSearchResults = [];
+// app.js
+let currentSearchResults = [];
 
-    static async initialize() {
-        SearchView.initialize();
-    }
+async function searchPatents(page = 1) {
+  try {
+    showLoading(true);
+    clearResults();
+    hideError();
 
-    static async searchPatents(page = 1) {
-        try {
-            DOMUtils.showLoading(true);
-            DOMUtils.clearResults();
-            DOMUtils.hideError();
+    const query = buildQuery(page);
+    const data = await searchPatentsApi(query);
 
-            const query = QueryBuilder.build(page);
-            const data = await PatentAPI.searchPatents(query);
-            
-            this.currentSearchResults = data.patents || [];
-            ResultsView.displayResults(data);
-            ResultsView.updateStats(data.total_patent_count);
-            PaginationView.update(
-                page,
-                Math.ceil(data.total_patent_count / PatentAPI.RESULTS_PER_PAGE)
-            );
-        } catch (error) {
-            DOMUtils.showError(`An error occurred while searching patents: ${error.message}`);
-            console.error('Search error:', error);
-        } finally {
-            DOMUtils.showLoading(false);
-        }
-    }
+    currentSearchResults = data.patents || [];
+    displayResults(data);
+    updateStats(data.total_patent_count);
+    updatePagination(
+      page,
+      Math.ceil(data.total_patent_count / RESULTS_PER_PAGE)
+    );
+  } catch (error) {
+    showError(`An error occurred while searching patents: ${error.message}`);
+    console.error("Search error:", error);
+  } finally {
+    showLoading(false);
+  }
+}
 
-    static exportResults() {
-        if (!this.currentSearchResults.length) {
-            DOMUtils.showError('No results to export');
-            return;
-        }
+function exportResults() {
+  if (!currentSearchResults.length) {
+    showError("No results to export");
+    return;
+  }
 
-        ExportService.downloadCSV(
-            this.currentSearchResults,
-            `patent_results_${DateFormatter.getCurrentDateString()}.csv`
-        );
-    }
+  downloadCSV(
+    currentSearchResults,
+    `patent_results_${getCurrentDateString()}.csv`
+  );
 }
 
 // Initialize the application when the DOM is ready
-document.addEventListener('DOMContentLoaded', () => App.initialize());
+document.addEventListener("DOMContentLoaded", () => initializeSearch());
+
+// Expose functions needed by HTML
+// window.searchPatents = searchPatents;
+// window.exportResults = exportResults;
+// window.toggleAdvancedFilters = toggleAdvancedFilters;
+// window.toggleSection = toggleSection;

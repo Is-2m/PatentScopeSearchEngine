@@ -1,9 +1,8 @@
-class DateFormatter {
-    static formatDate(dateString) {
-        return new Date(dateString).toLocaleDateString();
-    }
+// dateFormatter.js
+function formatDate(dateString) {
+  return new Date(dateString).toLocaleDateString();
+}
 
-    static getCurrentDateString() {
-        return new Date().toISOString().split('T')[0];
-    }
+function getCurrentDateString() {
+  return new Date().toISOString().split("T")[0];
 }

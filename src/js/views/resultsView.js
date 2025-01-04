@@ -1,90 +1,215 @@
-class ResultsView {
-    static updateStats(totalCount) {
-        document.getElementById('stats').innerHTML = 
-            `Found ${totalCount.toLocaleString()} patents`;
-    }
+// resultsView.js
+function updateStats(totalCount) {
+  document.getElementById("stats").innerHTML =
+    totalCount !== undefined
+      ? `Found ${totalCount.toLocaleString()} patents`
+      : "No results found";
+}
 
-    static displayResults(data) {
-        const resultsDiv = document.getElementById('results');
+function displayResults(data) {
+  const resultsDiv = document.getElementById("results");
 
-        if (!data.patents || data.patents.length === 0) {
-            resultsDiv.innerHTML = '<p>No patents found.</p>';
-            return;
-        }
+  if (!data.patents || data.patents.length === 0) {
+    resultsDiv.innerHTML = "<p>No patents found.</p>";
+    return;
+  }
 
-        const resultsHtml = data.patents
-            .map(patent => this.createPatentHTML(patent))
-            .join('');
+  const resultsHtml = data.patents
+    .map((patent) => createPatentHTML(patent))
+    .join("");
 
-        resultsDiv.innerHTML = resultsHtml;
-    }
+  resultsDiv.innerHTML = resultsHtml;
+}
 
-    static createPatentHTML(patent) {
-        return `
+function createPatentHTML(patent) {
+  return `
             <div class="patent-item">
-                <div class="patent-title">${patent.patent_title || 'Untitled'}</div>
+                <div class="patent-title">${
+                  patent.patent_title || "Untitled"
+                }</div>
                 <div class="patent-details">
-                    <p><strong>Patent Number:</strong> ${patent.patent_number}</p>
-                    <p><strong>Date:</strong> ${DateFormatter.formatDate(patent.patent_date)}</p>
-                    <p><strong>Type:</strong> ${patent.patent_type} (${patent.patent_kind})</p>
-                    ${this.getInventorHtml(patent)}
-                    ${this.getAssigneeHtml(patent)}
-                    ${this.getCPCHtml(patent)}
-                    ${patent.patent_abstract 
-                        ? `<p><strong>Abstract:</strong> ${patent.patent_abstract}</p>` 
-                        : ''}
+                    <div class="main-details">
+                        <p><strong>Patent Number:</strong> ${
+                          patent.patent_number
+                        }</p>
+                        <p><strong>Date:</strong> ${formatDate(
+                          patent.patent_date
+                        )}</p>
+                        <p><strong>Type:</strong> ${patent.patent_type} (${
+    patent.patent_kind
+  })</p>
+                    </div>
+                    
+                    <div class="expandable-section">
+                        <div class="expandable-header" onclick="ResultsView.toggleSection(this)">
+                            <span class="expand-icon">▼</span> Inventors
+                        </div>
+                        <div class="expandable-content">
+                            ${this.getInventorsTable(patent.inventors)}
+                        </div>
+                    </div>
+
+                    <div class="expandable-section">
+                        <div class="expandable-header" onclick="ResultsView.toggleSection(this)">
+                            <span class="expand-icon">▼</span> Assignees
+                        </div>
+                        <div class="expandable-content">
+                            ${this.getAssigneesTable(patent.assignees)}
+                        </div>
+                    </div>
+
+                    <div class="expandable-section">
+                        <div class="expandable-header" onclick="ResultsView.toggleSection(this)">
+                            <span class="expand-icon">▼</span> CPC Classifications
+                        </div>
+                        <div class="expandable-content">
+                            ${this.getCPCTable(patent.cpcs)}
+                        </div>
+                    </div>
+
+                    ${
+                      patent.patent_abstract
+                        ? `<div class="expandable-section">
+                            <div class="expandable-header" onclick="ResultsView.toggleSection(this)">
+                                <span class="expand-icon">▼</span> Abstract
+                            </div>
+                            <div class="expandable-content">
+                                <p>${patent.patent_abstract}</p>
+                            </div>
+                           </div>`
+                        : ""
+                    }
                 </div>
             </div>
         `;
-    }
+}
 
-    static getInventorHtml(patent) {
-        if (!patent.inventor_first_name && !patent.inventor_last_name) return '';
+function getInventorsTable(inventors) {
+  if (!inventors || inventors.length === 0) return "<p>No inventors listed</p>";
 
-        const names = [];
-        if (Array.isArray(patent.inventor_first_name)) {
-            for (let i = 0; i < patent.inventor_first_name.length; i++) {
-                const fullName = `${patent.inventor_first_name[i] || ''} ${patent.inventor_last_name[i] || ''}`.trim();
-                if (fullName) names.push(fullName);
-            }
-        } else {
-            const fullName = `${patent.inventor_first_name || ''} ${patent.inventor_last_name || ''}`.trim();
-            if (fullName) names.push(fullName);
-        }
+  return `
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${inventors
+                      .map(
+                        (inv) => `
+                        <tr>
+                            <td>${inv.inventor_first_name}</td>
+                            <td>${inv.inventor_last_name}</td>
+                            <td>${inv.inventor_key_id}</td>
+                        </tr>
+                    `
+                      )
+                      .join("")}
+                </tbody>
+            </table>
+        `;
+}
 
-        return names.length 
-            ? `<p><strong>Inventor${names.length > 1 ? 's' : ''}:</strong> ${names.join(', ')}</p>`
-            : '';
-    }
+function getAssigneesTable(assignees) {
+  if (!assignees || assignees.length === 0) return "<p>No assignees listed</p>";
 
-    static getAssigneeHtml(patent) {
-        if (!patent.assignee_organization) return '';
+  return `
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Type</th>
+                        <th>ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${assignees
+                      .map(
+                        (ass) => `
+                        <tr>
+                            <td>${ass.assignee_organization}</td>
+                            <td>${this.getAssigneeTypeText(
+                              ass.assignee_type
+                            )}</td>
+                            <td>${ass.assignee_key_id}</td>
+                        </tr>
+                    `
+                      )
+                      .join("")}
+                </tbody>
+            </table>
+        `;
+}
 
-        const assigneeType = this.getAssigneeTypeText(patent.assignee_type);
-        return `<p><strong>Assignee:</strong> ${patent.assignee_organization}${assigneeType ? ` (${assigneeType})` : ''}</p>`;
-    }
+function getCPCTable(cpcs) {
+  if (!cpcs || cpcs.length === 0) return "<p>No CPC classifications listed</p>";
 
-    static getCPCHtml(patent) {
-        if (!patent.cpc_section_id || !patent.cpc_group_id) return '';
+  return `
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Section</th>
+                        <th>Group</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${cpcs
+                      .map(
+                        (cpc) => `
+                        <tr>
+                            <td>${cpc.cpc_section_id}</td>
+                            <td>${cpc.cpc_group_id}</td>
+                            <td>${this.getCPCDescription(
+                              cpc.cpc_section_id
+                            )}</td>
+                        </tr>
+                    `
+                      )
+                      .join("")}
+                </tbody>
+            </table>
+        `;
+}
 
-        const cpcCodes = Array.isArray(patent.cpc_section_id)
-            ? patent.cpc_section_id.map((section, i) => `${section}${patent.cpc_group_id[i]}`)
-            : [`${patent.cpc_section_id}${patent.cpc_group_id}`];
+function getCPCDescription(section) {
+  const descriptions = {
+    A: "Human Necessities",
+    B: "Performing Operations; Transporting",
+    C: "Chemistry; Metallurgy",
+    D: "Textiles; Paper",
+    E: "Fixed Constructions",
+    F: "Mechanical Engineering; Lighting; Heating; Weapons; Blasting",
+    G: "Physics",
+    H: "Electricity",
+    Y: "General Tagging of New Technological Developments",
+  };
+  return descriptions[section] || "Unknown Section";
+}
 
-        return `<p><strong>CPC:</strong> ${cpcCodes.join(', ')}</p>`;
-    }
+function toggleSection(header) {
+  const content = header.nextElementSibling;
+  const icon = header.querySelector(".expand-icon");
 
-    static getAssigneeTypeText(type) {
-        const types = {
-            2: 'US Company',
-            3: 'Foreign Company',
-            4: 'US Individual',
-            5: 'Foreign Individual',
-            6: 'US Government',
-            7: 'Foreign Government',
-            8: 'County Government',
-            9: 'State Government'
-        };
-        return types[type] || '';
-    }
+  content.style.maxHeight = content.style.maxHeight
+    ? null
+    : content.scrollHeight + "px";
+  icon.textContent = content.style.maxHeight ? "▼" : "▲";
+}
+
+function getAssigneeTypeText(type) {
+  const types = {
+    2: "US Company",
+    3: "Foreign Company",
+    4: "US Individual",
+    5: "Foreign Individual",
+    6: "US Government",
+    7: "Foreign Government",
+    8: "County Government",
+    9: "State Government",
+  };
+  return types[type] || "";
 }

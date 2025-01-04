@@ -1,0 +1,17 @@
+Name,Description,Details
+q,JSON formatted object containing the query parameters. See below for details on formatting this object.,"string, required
+example: {""inventor_last_name"":""Whitney""}"
+f,"JSON formatted array of fields to include in the results. If not provided, defaults to patent_id, patent_number, and patent_title .","string, optional
+example: [""patent_number"", ""date""]"
+s,"JSON formatted array of objects to sort the results. If not provided, defaults to patent_number .","string, optional
+example: [{""patent_number"":""desc""}]"
+o,"JSON formatted object of options to modify the query or results. Available options are:
+matched_subentities_only — Only subentity data that matches the subentity specific criteria is included in results. Defaults to true.
+include_subentity_total_counts — Total counts of unique subentities included in results. Defaults to false.
+page — return only the Nth page of results. Defaults to 1.
+per_page — Size of each page of results. Defaults to 25.","string, optional
+example: o={""matched_subentities_only"": ""true"", ""page"": 2, ""per_page"": 50, ""include_subentity_total_counts"": ""false""}"
+format,"Specifies the response data format. If not provided, defaults to JSON. Available options are:
+json
+xml","string, optional
+example: format=xml"

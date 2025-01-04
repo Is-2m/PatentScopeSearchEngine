@@ -1,354 +1,756 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Advanced Patent Search</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
 
-        .search-box {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
+      .search-box {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
 
-        .search-form {
-            display: grid;
-            gap: 15px;
-        }
+      .search-form {
+        display: grid;
+        gap: 15px;
+      }
 
-        .form-group {
-            display: grid;
-            gap: 10px;
-        }
+      .form-group {
+        display: grid;
+        gap: 10px;
+      }
 
-        .search-filters {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
+      .search-filters {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
 
-        input, select {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
+      .advanced-filters {
+        display: none;
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+        margin-top: 15px;
+      }
 
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
+      .advanced-filters.show {
+        display: grid;
+      }
 
-        button:hover {
-            background-color: #0056b3;
-        }
+      input,
+      select {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
 
-        .results {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+      button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+      }
 
-        .patent-item {
-            border-bottom: 1px solid #eee;
-            padding: 15px 0;
-        }
+      button:hover {
+        background-color: #0056b3;
+      }
 
-        .patent-item:last-child {
-            border-bottom: none;
-        }
+      button.secondary {
+        background-color: #6c757d;
+      }
 
-        .patent-title {
-            font-size: 18px;
-            color: #007bff;
-            margin-bottom: 10px;
-        }
+      button.secondary:hover {
+        background-color: #5a6268;
+      }
 
-        .patent-details {
-            display: grid;
-            gap: 10px;
-            font-size: 14px;
-            color: #666;
-        }
+      .results {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
 
-        .loading {
-            text-align: center;
-            padding: 20px;
-            display: none;
-        }
+      .patent-item {
+        border-bottom: 1px solid #eee;
+        padding: 15px 0;
+      }
 
-        .error {
-            color: #dc3545;
-            padding: 10px;
-            background-color: #f8d7da;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            display: none;
-        }
+      .patent-item:last-child {
+        border-bottom: none;
+      }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
+      .patent-title {
+        font-size: 18px;
+        color: #007bff;
+        margin-bottom: 10px;
+      }
 
-        .pagination button {
-            padding: 5px 10px;
-        }
+      .patent-details {
+        display: grid;
+        gap: 10px;
+        font-size: 14px;
+        color: #666;
+      }
 
-        .pagination button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
+      .loading {
+        text-align: center;
+        padding: 20px;
+        display: none;
+      }
+
+      .error {
+        color: #dc3545;
+        padding: 10px;
+        background-color: #f8d7da;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        display: none;
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .pagination button {
+        padding: 5px 10px;
+      }
+
+      .pagination button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+
+      .sort-container {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .export-button {
+        margin-left: auto;
+      }
+
+      .classification-input {
+        display: flex;
+        gap: 10px;
+      }
+
+      .classification-input input:first-child {
+        width: 80px;
+      }
+
+      .toggle-filters {
+        text-align: center;
+        color: #007bff;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      .stats {
+        margin-bottom: 15px;
+        color: #666;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="search-box">
-            <h1>Advanced Patent Search</h1>
-            <div class="search-form">
-                <div class="form-group">
-                    <input type="text" id="keywordSearch" placeholder="Enter keywords...">
-                </div>
-                <div class="search-filters">
-                    <div class="form-group">
-                        <input type="date" id="dateFrom" placeholder="Date from">
-                    </div>
-                    <div class="form-group">
-                        <input type="date" id="dateTo" placeholder="Date to">
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="inventorName" placeholder="Inventor name">
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="assigneeName" placeholder="Assignee name">
-                    </div>
-                </div>
-                <button onclick="searchPatents(1)">Search Patents</button>
+      <div class="search-box">
+        <h1>Advanced Patent Search</h1>
+        <div class="search-form">
+          <div class="form-group">
+            <input
+              type="text"
+              id="keywordSearch"
+              placeholder="Search in title, abstract, or claims..."
+            />
+          </div>
+          <div class="search-filters">
+            <div class="form-group">
+              <label>Date Range</label>
+              <input type="date" id="dateFrom" placeholder="Date from" />
             </div>
+            <div class="form-group">
+              <input type="date" id="dateTo" placeholder="Date to" />
+            </div>
+            <div class="form-group">
+              <label>Inventor Name</label>
+              <div class="classification-input">
+                <input
+                  type="text"
+                  id="inventorFirstName"
+                  placeholder="First name"
+                />
+                <input
+                  type="text"
+                  id="inventorLastName"
+                  placeholder="Last name"
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Assignee Details</label>
+              <select id="assigneeType">
+                <option value="">All Types</option>
+                <option value="2">US Company</option>
+                <option value="3">Foreign Company</option>
+                <option value="4,5">Individual</option>
+                <option value="6,7">Government</option>
+              </select>
+              <input
+                type="text"
+                id="assigneeName"
+                placeholder="Organization name"
+              />
+            </div>
+          </div>
+          <div class="toggle-filters" onclick="toggleAdvancedFilters()">
+            Show Advanced Filters ▼
+          </div>
+          <div class="advanced-filters" id="advancedFilters">
+            <div class="form-group">
+              <label>Patent Type</label>
+              <select id="patentType">
+                <option value="">All Types</option>
+                <option value="utility">Utility</option>
+                <option value="design">Design</option>
+                <option value="plant">Plant</option>
+                <option value="reissue">Reissue</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>CPC Classification</label>
+              <div class="classification-input">
+                <input
+                  type="text"
+                  id="cpcSection"
+                  placeholder="Section"
+                  maxlength="1"
+                />
+                <input type="text" id="cpcClass" placeholder="Class" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <select id="countryCode">
+                <option value="">All Countries</option>
+                <option value="US">United States</option>
+                <option value="EP">European Union</option>
+                <option value="JP">Japan</option>
+                <option value="CN">China</option>
+                <option value="KR">South Korea</option>
+              </select>
+            </div>
+          </div>
+          <button onclick="searchPatents(1)">Search Patents</button>
         </div>
-        
-        <div class="error" id="error"></div>
-        <div class="loading" id="loading">Searching patents...</div>
+      </div>
+
+      <div class="error" id="error"></div>
+      <div class="loading" id="loading">Searching patents...</div>
+
+      <div class="results-container">
+        <div class="sort-container">
+          <select id="sortField">
+            <option value="patent_date">Sort by Date</option>
+            <option value="patent_number">Sort by Patent Number</option>
+            <option value="patent_title">Sort by Title</option>
+          </select>
+          <select id="sortOrder">
+            <option value="desc">Descending</option>
+            <option value="asc">Ascending</option>
+          </select>
+          <button class="export-button" onclick="exportResults()">
+            Export Results
+          </button>
+        </div>
+        <div class="stats" id="stats"></div>
         <div class="results" id="results"></div>
         <div class="pagination" id="pagination"></div>
+      </div>
     </div>
 
     <script>
-        const API_BASE_URL = 'https://api.patentsview.org/patents/query';
-        const RESULTS_PER_PAGE = 25;
-        let currentPage = 1;
-        let totalResults = 0;
+      const API_BASE_URL = "https://api.patentsview.org/patents/query";
+      const RESULTS_PER_PAGE = 25;
+      let currentPage = 1;
+      let totalResults = 0;
+      let currentSearchResults = [];
 
-        async function searchPatents(page = 1) {
-            const loadingDiv = document.getElementById('loading');
-            const errorDiv = document.getElementById('error');
-            const resultsDiv = document.getElementById('results');
-            
-            try {
-                showLoading(true);
-                clearResults();
-                hideError();
+      function toggleAdvancedFilters() {
+        const filters = document.getElementById("advancedFilters");
+        const toggle = document.querySelector(".toggle-filters");
+        filters.classList.toggle("show");
+        toggle.textContent = filters.classList.contains("show")
+          ? "Hide Advanced Filters ▲"
+          : "Show Advanced Filters ▼";
+      }
 
-                const query = buildQuery(page);
-                const response = await fetch(API_BASE_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(query)
-                });
+      async function searchPatents(page = 1) {
+        const loadingDiv = document.getElementById("loading");
+        const errorDiv = document.getElementById("error");
+        const resultsDiv = document.getElementById("results");
 
-                if (!response.ok) {
-                    throw new Error('Search failed');
-                }
+        try {
+          showLoading(true);
+          clearResults();
+          hideError();
 
-                const data = await response.json();
-                displayResults(data);
-                updatePagination(page, Math.ceil(data.total_patent_count / RESULTS_PER_PAGE));
-            } catch (error) {
-                showError('An error occurred while searching patents. Please try again later.');
-                console.error('Search error:', error);
-            } finally {
-                showLoading(false);
-            }
+          const query = buildQuery(page);
+          const response = await fetch(API_BASE_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(query),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Search failed: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          currentSearchResults = data.patents || [];
+          displayResults(data);
+          updateStats(data.total_patent_count);
+          updatePagination(
+            page,
+            Math.ceil(data.total_patent_count / RESULTS_PER_PAGE)
+          );
+        } catch (error) {
+          showError(
+            `An error occurred while searching patents: ${error.message}`
+          );
+          console.error("Search error:", error);
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      function buildQuery(page) {
+        const keyword = document.getElementById("keywordSearch").value.trim();
+        const dateFrom = document.getElementById("dateFrom").value;
+        const dateTo = document.getElementById("dateTo").value;
+        const inventorFirstName = document
+          .getElementById("inventorFirstName")
+          .value.trim();
+        const inventorLastName = document
+          .getElementById("inventorLastName")
+          .value.trim();
+        const assigneeName = document
+          .getElementById("assigneeName")
+          .value.trim();
+        const assigneeType = document.getElementById("assigneeType").value;
+        const patentType = document.getElementById("patentType").value;
+        const cpcSection = document
+          .getElementById("cpcSection")
+          .value.toUpperCase();
+        const cpcClass = document.getElementById("cpcClass").value;
+        const countryCode = document.getElementById("countryCode").value;
+        const sortField = document.getElementById("sortField").value;
+        const sortOrder = document.getElementById("sortOrder").value;
+
+        let conditions = [];
+
+        // Keyword search in both title and abstract
+        if (keyword) {
+          conditions.push({
+            _or: [
+              { _text_any: { patent_title: keyword } },
+              { _text_any: { patent_abstract: keyword } },
+            ],
+          });
         }
 
-        function buildQuery(page) {
-            const keyword = document.getElementById('keywordSearch').value.trim();
-            const dateFrom = document.getElementById('dateFrom').value;
-            const dateTo = document.getElementById('dateTo').value;
-            const inventorName = document.getElementById('inventorName').value.trim();
-            const assigneeName = document.getElementById('assigneeName').value.trim();
-
-            let conditions = [];
-
-            if (keyword) {
-                conditions.push({
-                    "_text_any": {
-                        "patent_title": keyword
-                    }
-                });
-            }
-
-            if (dateFrom) {
-                conditions.push({
-                    "_gte": {
-                        "patent_date": dateFrom
-                    }
-                });
-            }
-
-            if (dateTo) {
-                conditions.push({
-                    "_lte": {
-                        "patent_date": dateTo
-                    }
-                });
-            }
-
-            if (inventorName) {
-                conditions.push({
-                    "_text_any": {
-                        "inventor_last_name": inventorName
-                    }
-                });
-            }
-
-            if (assigneeName) {
-                conditions.push({
-                    "_text_any": {
-                        "assignee_organization": assigneeName
-                    }
-                });
-            }
-
-            const query = {
-                q: conditions.length > 1 ? { "_and": conditions } : conditions[0] || {},
-                f: [
-                    "patent_number",
-                    "patent_title",
-                    "patent_date",
-                    "patent_abstract",
-                    "inventor_last_name",
-                    "assignee_organization",
-                    "patent_type",
-                    "patent_kind"
-                ],
-                o: {
-                    "page": page,
-                    "per_page": RESULTS_PER_PAGE
-                }
-            };
-
-            return query;
+        // Date range
+        if (dateFrom) {
+          conditions.push({
+            _gte: {
+              patent_date: dateFrom,
+            },
+          });
+        }
+        if (dateTo) {
+          conditions.push({
+            _lte: {
+              patent_date: dateTo,
+            },
+          });
         }
 
-        function displayResults(data) {
-            const resultsDiv = document.getElementById('results');
-            
-            if (!data.patents || data.patents.length === 0) {
-                resultsDiv.innerHTML = '<p>No patents found.</p>';
-                return;
-            }
-
-            const resultsHtml = data.patents.map(patent => `
-                <div class="patent-item">
-                    <div class="patent-title">${patent.patent_title || 'Untitled'}</div>
-                    <div class="patent-details">
-                        <p><strong>Patent Number:</strong> ${patent.patent_number}</p>
-                        <p><strong>Date:</strong> ${formatDate(patent.patent_date)}</p>
-                        <p><strong>Type:</strong> ${patent.patent_type} (${patent.patent_kind})</p>
-                        ${patent.inventor_last_name ? `<p><strong>Inventor:</strong> ${patent.inventor_last_name}</p>` : ''}
-                        ${patent.assignee_organization ? `<p><strong>Assignee:</strong> ${patent.assignee_organization}</p>` : ''}
-                        ${patent.patent_abstract ? `<p><strong>Abstract:</strong> ${patent.patent_abstract}</p>` : ''}
-                    </div>
-                </div>
-            `).join('');
-
-            resultsDiv.innerHTML = resultsHtml;
-        }
-
-        function updatePagination(currentPage, totalPages) {
-            const paginationDiv = document.getElementById('pagination');
-            paginationDiv.innerHTML = '';
-
-            if (totalPages <= 1) return;
-
-            const prevButton = document.createElement('button');
-            prevButton.textContent = 'Previous';
-            prevButton.disabled = currentPage === 1;
-            prevButton.onclick = () => searchPatents(currentPage - 1);
-
-            const nextButton = document.createElement('button');
-            nextButton.textContent = 'Next';
-            nextButton.disabled = currentPage === totalPages;
-            nextButton.onclick = () => searchPatents(currentPage + 1);
-
-            paginationDiv.appendChild(prevButton);
-            paginationDiv.appendChild(nextButton);
-        }
-
-        function formatDate(dateString) {
-            return new Date(dateString).toLocaleDateString();
-        }
-
-        function showLoading(show) {
-            document.getElementById('loading').style.display = show ? 'block' : 'none';
-        }
-
-        function showError(message) {
-            const errorDiv = document.getElementById('error');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-        }
-
-        function hideError() {
-            document.getElementById('error').style.display = 'none';
-        }
-
-        function clearResults() {
-            document.getElementById('results').innerHTML = '';
-            document.getElementById('pagination').innerHTML = '';
-        }
-
-        // Add event listeners for Enter key
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    searchPatents(1);
-                }
+        // Inventor name (both first and last name)
+        if (inventorFirstName || inventorLastName) {
+          let inventorConditions = [];
+          if (inventorFirstName) {
+            inventorConditions.push({
+              inventor_first_name: inventorFirstName,
             });
+          }
+          if (inventorLastName) {
+            inventorConditions.push({
+              inventor_last_name: inventorLastName,
+            });
+          }
+          if (inventorConditions.length > 1) {
+            conditions.push({ _and: inventorConditions });
+          } else {
+            conditions.push(inventorConditions[0]);
+          }
+        }
+
+        // Assignee filters
+        if (assigneeName) {
+          conditions.push({
+            assignee_organization: assigneeName,
+          });
+        }
+        if (assigneeType) {
+          conditions.push({
+            _or: assigneeType.split(",").map((type) => ({
+              assignee_type: type,
+            })),
+          });
+        }
+
+        // Patent type
+        if (patentType) {
+          conditions.push({
+            patent_type: patentType,
+          });
+        }
+
+        // CPC Classification
+        if (cpcSection) {
+          conditions.push({
+            cpc_section_id: cpcSection,
+          });
+          if (cpcClass) {
+            conditions.push({
+              cpc_class: cpcClass,
+            });
+          }
+        }
+
+        // Country filter
+        if (countryCode) {
+          conditions.push({
+            assignee_country: countryCode,
+          });
+        }
+
+        const query = {
+          q: conditions.length > 1 ? { _and: conditions } : conditions[0] || {},
+          f: [
+            "patent_number",
+            "patent_title",
+            "patent_date",
+            "patent_abstract",
+            "inventor_first_name",
+            "inventor_last_name",
+            "assignee_organization",
+            "assignee_type",
+            "patent_type",
+            "patent_kind",
+            "cpc_section_id",
+            "cpc_group_id",
+          ],
+          o: {
+            page: page,
+            per_page: RESULTS_PER_PAGE,
+          },
+          s: [{ [sortField]: sortOrder }],
+        };
+
+        return query;
+      }
+
+      function displayResults(data) {
+        const resultsDiv = document.getElementById("results");
+
+        if (!data.patents || data.patents.length === 0) {
+          resultsDiv.innerHTML = "<p>No patents found.</p>";
+          return;
+        }
+
+        const resultsHtml = data.patents
+          .map(
+            (patent) => `
+                                <div class="patent-item">
+                                    <div class="patent-title">${
+                                      patent.patent_title || "Untitled"
+                                    }</div>
+                                    <div class="patent-details">
+                                        <p><strong>Patent Number:</strong> ${
+                                          patent.patent_number
+                                        }</p>
+                                        <p><strong>Date:</strong> ${formatDate(
+                                          patent.patent_date
+                                        )}</p>
+                                        <p><strong>Type:</strong> ${
+                                          patent.patent_type
+                                        } (${patent.patent_kind})</p>
+                                        ${getInventorHtml(patent)}
+                                        ${getAssigneeHtml(patent)}
+                                        ${getCPCHtml(patent)}
+                                        ${
+                                          patent.patent_abstract
+                                            ? `<p><strong>Abstract:</strong> ${patent.patent_abstract}</p>`
+                                            : ""
+                                        }
+                                    </div>
+                                </div>
+                            `
+          )
+          .join("");
+
+        resultsDiv.innerHTML = resultsHtml;
+      }
+
+      function getInventorHtml(patent) {
+        if (!patent.inventor_first_name && !patent.inventor_last_name)
+          return "";
+
+        const names = [];
+        if (Array.isArray(patent.inventor_first_name)) {
+          // Handle multiple inventors
+          for (let i = 0; i < patent.inventor_first_name.length; i++) {
+            const fullName = `${patent.inventor_first_name[i] || ""} ${
+              patent.inventor_last_name[i] || ""
+            }`.trim();
+            if (fullName) names.push(fullName);
+          }
+        } else {
+          // Handle single inventor
+          const fullName = `${patent.inventor_first_name || ""} ${
+            patent.inventor_last_name || ""
+          }`.trim();
+          if (fullName) names.push(fullName);
+        }
+
+        return names.length
+          ? `<p><strong>Inventor${
+              names.length > 1 ? "s" : ""
+            }:</strong> ${names.join(", ")}</p>`
+          : "";
+      }
+
+      function getAssigneeHtml(patent) {
+        if (!patent.assignee_organization) return "";
+
+        const assigneeType = getAssigneeTypeText(patent.assignee_type);
+        return `<p><strong>Assignee:</strong> ${patent.assignee_organization}${
+          assigneeType ? ` (${assigneeType})` : ""
+        }</p>`;
+      }
+
+      function getCPCHtml(patent) {
+        if (!patent.cpc_section_id || !patent.cpc_group_id) return "";
+
+        const cpcCodes = Array.isArray(patent.cpc_section_id)
+          ? patent.cpc_section_id.map(
+              (section, i) => `${section}${patent.cpc_group_id[i]}`
+            )
+          : [`${patent.cpc_section_id}${patent.cpc_group_id}`];
+
+        return `<p><strong>CPC:</strong> ${cpcCodes.join(", ")}</p>`;
+      }
+
+      function getAssigneeTypeText(type) {
+        const types = {
+          2: "US Company",
+          3: "Foreign Company",
+          4: "US Individual",
+          5: "Foreign Individual",
+          6: "US Government",
+          7: "Foreign Government",
+          8: "County Government",
+          9: "State Government",
+        };
+        return types[type] || "";
+      }
+
+      function updateStats(totalCount) {
+        const statsDiv = document.getElementById("stats");
+        statsDiv.innerHTML = `Found ${totalCount.toLocaleString()} patents`;
+      }
+
+      function exportResults() {
+        if (!currentSearchResults.length) {
+          showError("No results to export");
+          return;
+        }
+
+        const csv = convertToCSV(currentSearchResults);
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute(
+          "download",
+          `patent_results_${formatDate(new Date())}.csv`
+        );
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      function convertToCSV(data) {
+        const headers = [
+          "Patent Number",
+          "Title",
+          "Date",
+          "Type",
+          "Kind",
+          "Inventors",
+          "Assignee",
+          "CPC Codes",
+          "Abstract",
+        ];
+
+        const rows = data.map((patent) => [
+          patent.patent_number,
+          patent.patent_title,
+          patent.patent_date,
+          patent.patent_type,
+          patent.patent_kind,
+          getInventorsText(patent),
+          patent.assignee_organization || "",
+          getCPCText(patent),
+          (patent.patent_abstract || "").replace(/"/g, '""'),
+        ]);
+
+        return [
+          headers.join(","),
+          ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+        ].join("\n");
+      }
+
+      function getInventorsText(patent) {
+        if (!patent.inventor_first_name && !patent.inventor_last_name)
+          return "";
+
+        const names = [];
+        if (Array.isArray(patent.inventor_first_name)) {
+          for (let i = 0; i < patent.inventor_first_name.length; i++) {
+            const fullName = `${patent.inventor_first_name[i] || ""} ${
+              patent.inventor_last_name[i] || ""
+            }`.trim();
+            if (fullName) names.push(fullName);
+          }
+        } else {
+          const fullName = `${patent.inventor_first_name || ""} ${
+            patent.inventor_last_name || ""
+          }`.trim();
+          if (fullName) names.push(fullName);
+        }
+
+        return names.join("; ");
+      }
+
+      function getCPCText(patent) {
+        if (!patent.cpc_section_id || !patent.cpc_group_id) return "";
+
+        const cpcCodes = Array.isArray(patent.cpc_section_id)
+          ? patent.cpc_section_id.map(
+              (section, i) => `${section}${patent.cpc_group_id[i]}`
+            )
+          : [`${patent.cpc_section_id}${patent.cpc_group_id}`];
+
+        return cpcCodes.join("; ");
+      }
+
+      function updatePagination(currentPage, totalPages) {
+        const paginationDiv = document.getElementById("pagination");
+        paginationDiv.innerHTML = "";
+
+        if (totalPages <= 1) return;
+
+        // Previous button
+        const prevButton = document.createElement("button");
+        prevButton.textContent = "Previous";
+        prevButton.disabled = currentPage === 1;
+        prevButton.onclick = () => searchPatents(currentPage - 1);
+
+        // Page numbers
+        const pageInfo = document.createElement("span");
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+        pageInfo.style.margin = "0 10px";
+
+        // Next button
+        const nextButton = document.createElement("button");
+        nextButton.textContent = "Next";
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.onclick = () => searchPatents(currentPage + 1);
+
+        paginationDiv.appendChild(prevButton);
+        paginationDiv.appendChild(pageInfo);
+        paginationDiv.appendChild(nextButton);
+      }
+
+      function formatDate(dateString) {
+        return new Date(dateString).toLocaleDateString();
+      }
+
+      function showLoading(show) {
+        document.getElementById("loading").style.display = show
+          ? "block"
+          : "none";
+      }
+
+      function showError(message) {
+        const errorDiv = document.getElementById("error");
+        errorDiv.textContent = message;
+        errorDiv.style.display = "block";
+      }
+
+      function hideError() {
+        document.getElementById("error").style.display = "none";
+      }
+
+      function clearResults() {
+        document.getElementById("results").innerHTML = "";
+        document.getElementById("pagination").innerHTML = "";
+        document.getElementById("stats").innerHTML = "";
+      }
+
+      // Add event listeners for Enter key
+      document.querySelectorAll("input").forEach((input) => {
+        input.addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            searchPatents(1);
+          }
         });
+      });
     </script>
-</body>
+  </body>
 </html>

@@ -4,6 +4,16 @@
 The project is a A vanilla JavaScript application for searching and exploring patent data using the PatentsView legacy API. Its goal is to allow users to search for patents based on various criteria such as inventor name, assignee organization, patent dates, keywords, and more. The application fetches data from the API and displays it in a user-friendly format with pagination and search functionality.
 ---
 
+## Team Members
+
+The following members collaborated on the Patent Search Engine Project:
+
+- **ALJIRAF Ibtissam**  
+- **ELKHIOUAKH Salma**  
+- **ISAM Soufiane**  
+- **MORDY Hatim**  
+- **OUANGOUL Maryam**  
+
 ## Project Structure
 ```
 ./
@@ -33,7 +43,7 @@ The project is a A vanilla JavaScript application for searching and exploring pa
 ## Setup
 
 1. Clone the repository
-2. Open `src/templates/index.html` in a web browser
+2. Open `index.html` in a web browser
 
 ## Features
 

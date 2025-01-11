@@ -20,6 +20,7 @@ function clearResults() {
 }
 
 function toggleAdvancedFilters() {
+  console.log("toggleAdvancedFilters");
   const filters = document.getElementById("advancedFilters");
   const toggle = document.querySelector(".toggle-filters");
   filters.classList.toggle("show");

@@ -12,7 +12,7 @@ function addSearchEventListeners() {
     });
   });
 
-  document
-    .querySelector(".toggle-filters")
-    .addEventListener("click", toggleAdvancedFilters);
+  // document
+  //   .querySelector(".toggle-filters")
+  //   .addEventListener("click", toggleAdvancedFilters);
 }

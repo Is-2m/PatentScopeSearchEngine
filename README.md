@@ -1,7 +1,8 @@
 # Patent Search Engine Project Summary
 
-## Project Overview
+## Project Overview:
 The project is a A vanilla JavaScript application for searching and exploring patent data using the PatentsView legacy API. Its goal is to allow users to search for patents based on various criteria such as inventor name, assignee organization, patent dates, keywords, and more. The application fetches data from the API and displays it in a user-friendly format with pagination and search functionality.
+
 ---
 
 ## Team Members
